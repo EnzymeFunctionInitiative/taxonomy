@@ -1,0 +1,9 @@
+<?php
+
+// Set $db variable that points to an instance of PDO
+$db = false;
+
+// Define the table name
+define("__TAX_TABLE__","taxonomy");
+
+
