@@ -7,11 +7,11 @@ function AppTF(containerIdFn, searchApp) {
 }
 
 
-AppTF.prototype.addTaxPreselectSet = function(name, set, containerClasses) {
+AppTF.prototype.addTaxPreselectSet = function(name, nameId, set, containerClasses) {
     this.preselects[name] = set;
     var selects = $(containerClasses);
     selects.each(function(selIdx) {
-        $(this).append('<option>' + name + '</option>');
+        $(this).append('<option value="' + nameId + '">' + name + '</option>');
     });
 };
 
@@ -22,12 +22,12 @@ AppTF.prototype.getTaxonomyCategories = function() {
 };
 
 
-AppTF.prototype.addTaxCondition = function(opt, defaultSelected = "", defaultSearch = "") {
+AppTF.prototype.addTaxCondition = function(opt, defaultSelected = "", defaultSearch = "", showCondition = true) {
     var typeSelect = $('<select class="tax-select bigger m-5"></select>');
     var cats = this.getTaxonomyCategories();
     for (var i = 0; i < cats.length; i++) {
         var selected = cats[i] == defaultSelected ? " selected" : "";
-        typeSelect.append('<option' + selected + '>' + cats[i] + '</option>');
+        typeSelect.append('<option' + selected + ' value="' + cats[i] + '">' + cats[i] + '</option>');
     }
     var div1 = $('<div style="display: inline-block"></div>').append(typeSelect);
 
@@ -40,7 +40,8 @@ AppTF.prototype.addTaxCondition = function(opt, defaultSelected = "", defaultSea
 
     var div2 = $('<div style="display: inline-block"></div>').append(valueInput);
 
-    var mainDiv = $('<div class="tax-group" style=""></div>').append(div1).append(div2);
+    var visibleStyle = showCondition ? "" : "display: none";
+    var mainDiv = $('<div class="tax-group" style="'+visibleStyle+'"></div>').append(div1).append(div2);
 
     var div3 = $('<div style="display: inline-block; cursor: pointer"><i class="fas fa-trash m-5"></i></div>');
     div3.click(function() {
@@ -67,14 +68,14 @@ AppTF.prototype.addTaxCondition = function(opt, defaultSelected = "", defaultSea
 };
 
 
-AppTF.prototype.addTaxPreselectConditions = function(opt, preselectName) {
+AppTF.prototype.addTaxPreselectConditions = function(opt, preselectName, showConditions = true) {
     if (!(preselectName in this.preselects))
-        return;
+        return false;
     var containerId = this.containerIdFn(opt);
     $(containerId).empty();
     var preselect = this.preselects[preselectName];
     for (var i = 0; i < preselect.length; i++) {
-        this.addTaxCondition(opt, preselect[i][0], preselect[i][1]);
+        this.addTaxCondition(opt, preselect[i][0], preselect[i][1], showConditions);
     }
 };
 
@@ -115,7 +116,7 @@ AppTF.prototype.setupTaxonomyTypeahead = function(inputObj, category) {
         },
         minLength: 3,
         select: function (evt, ui) {
-            console.log(ui.item.value + " " + ui.item.id);
+            //console.log(ui.item.value + " " + ui.item.id);
         }
     });
 };
